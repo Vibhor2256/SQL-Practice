@@ -1,0 +1,86 @@
+use warehouse PRACTWAREHOUSE1;
+use database VB_DEMODATABASE1;
+
+create or replace table VB_table1
+(
+  ORDER_ID varchar(20),
+  ORDER_ID_EXTENSION varchar(15),
+  ORDER_DATE Date,
+  SHIP_DATE Date,
+  SHIP_MODE String,
+  CUSTOMER_NAME varchar(25),
+  SEGMENT String,
+  STATE String,
+  COUNTRY String,
+  MARKET String,
+  REGION String,
+  PRODUCT_ID varchar(25),
+  CATEGORY String,
+  SUB_CATEGORY String,
+  PRODUCT_NAME varchar,
+  SALES String,
+  QUANTITY INT,
+  DISCOUNT DECIMAL(5,3),
+  PROFIT DECIMAL(10,6),
+  SHIPPING_COST DECIMAL(6,3),
+  ORDER_PRIORITY String,
+  YEAR INT
+);
+
+--Q1
+ALTER table VB_table1 Add PRIMARY KEY (ORDER_ID);
+describe table VB_table1;
+select * from VB_table1;
+
+--Q2
+/*ALTER table VB_table1 modify (ORDER_DATE DATE) ;
+UPDATE VB_table1 set ORDER_DATE=to_date(ORDER_DATE,'DD-MM-YYYY');
+ALTER TABLE sales_order MODIFY (delivery_date DATE);
+
+UPDATE my_table SET new_col=TO_DATE(old_col,'MM/DD/YYYY'); */
+--ALTER table VB_table1 ADD new_col DATE;
+--update VB_table1 set new_col= coalesce(try_to_date(ORDER_DATE, 'DD-MM-YYYY'), try_to_date(ORDER_DATE, 'D/MM/YYYY'), try_to_date(ORDER_DATE,'DD/MM/YYYY'));
+--ALTER TABLE VB_table1 DROP (ORDER_DATE);
+--ALTER TABLE VB_table1 RENAME COLUMN new_col TO ORDER_DATE;
+
+--The above are just my trials for changing cols ORDER_DATE and SHIP_DATE into DATE formats. Which didn't work for this datset what actually worked for
+--this datasset is in the 'Live Assginment-1 Notes'file in my local.
+
+select * from VB_table1;
+
+--Q3
+-- Did it in excel using text to columns
+
+--Q4
+ALTER table VB_table1 Add FLAG varchar(5);
+//Alter table VB_table1 DROP FLAG ;
+Update VB_table1 set FLAG=
+case
+    when DISCOUNT>0 then 'YES'
+    else 'FALSE'
+end;
+
+select * from VB_table1;
+
+--Q5
+--Already a column named profit is present so no need
+
+--Q6
+Alter table VB_table1 add DAYS_FOR_SHIPMENT INT;
+UPDATE VB_table1 set DAYS_FOR_SHIPMENT= datediff('DAY',ORDER_DATE,SHIP_DATE);
+select * from VB_table1;
+
+--Q7
+ALTER TABLE VB_table1 add SHIPMENT_RATING INT;
+UPDATE VB_table1 set SHIPMENT_RATING= 
+case
+    when DAYS_FOR_SHIPMENT<=3 then 5
+    when DAYS_FOR_SHIPMENT<=6 AND DAYS_FOR_SHIPMENT>3 then 4
+    when DAYS_FOR_SHIPMENT<10 AND DAYS_FOR_SHIPMENT>6 then 3
+    when DAYS_FOR_SHIPMENT>=10 then 2
+    else 'NA'
+end;
+select * from VB_table1;
+
+
+
